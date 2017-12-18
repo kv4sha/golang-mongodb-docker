@@ -4,13 +4,13 @@ import (
 	"log"
 	"net/http"
 
+	mgo "gopkg.in/mgo.v2"
+
 	"github.com/urfave/negroni"
 
-	"gopkg.in/mgo.v2"
-
-	"github.com/kv4sha/golang-mongodb-docker/clients/config"
-	"github.com/kv4sha/golang-mongodb-docker/clients/middlewares"
-	"github.com/kv4sha/golang-mongodb-docker/clients/router"
+	"github.com/kv4sha/golang-mongodb-docker/sources/config"
+	"github.com/kv4sha/golang-mongodb-docker/sources/middlewares"
+	"github.com/kv4sha/golang-mongodb-docker/sources/router"
 )
 
 func main() {
@@ -25,7 +25,7 @@ func main() {
 
 	handler := negroni.Classic()
 	handler.UseFunc(middlewares.ContentTypeFunc)
-	handler.UseHandler(router.GetRouter(mongoDbSession, appConfig.DestinationsServiceURL, appConfig.SourcesServiceURL))
+	handler.UseHandler(router.GetRouter(mongoDbSession))
 
 	server := &http.Server{
 		Addr:    appConfig.Server,

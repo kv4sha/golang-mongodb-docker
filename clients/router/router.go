@@ -9,11 +9,12 @@ import (
 	"github.com/kv4sha/golang-mongodb-docker/clients/services"
 )
 
-func GetRouter(mongoDbSession *mgo.Session) *mux.Router {
-	repository := repositories.GetClientsRepository(mongoDbSession)
+func GetRouter(mongoDbSession *mgo.Session, destinationsServiceURL string, sourcesServiceURL string) *mux.Router {
+	clientsRepository := repositories.GetClientsRepository(mongoDbSession)
+	destinationsRepository := repositories.GetDestinationsRepository(destinationsServiceURL)
+	sourcesRepository := repositories.GetSourcesRepository(sourcesServiceURL)
 
-	service := services.GetClientsService(repository)
-
+	service := services.GetClientsService(clientsRepository, destinationsRepository, sourcesRepository)
 	controller := controllers.GetClientsController(service)
 
 	router := mux.NewRouter()

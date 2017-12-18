@@ -7,10 +7,8 @@ import (
 )
 
 type Configuration struct {
-	Server                 string
-	MongoDbURL             string
-	DestinationsServiceURL string
-	SourcesServiceURL      string
+	Server     string
+	MongoDbURL string
 }
 
 var appConfig = &Configuration{}

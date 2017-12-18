@@ -12,7 +12,46 @@
             "program": "${workspaceRoot}/clients",
             "env": {},
             "args": [],
-            "showLog": true
+            "showLog": false
+        },
+        {
+            "name": "destinations",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "remotePath": "",
+            "port": 2345,
+            "host": "127.0.0.1",
+            "program": "${workspaceRoot}/destinations",
+            "env": {},
+            "args": [],
+            "showLog": false
+        },
+        {
+            "name": "sources",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "remotePath": "",
+            "port": 2345,
+            "host": "127.0.0.1",
+            "program": "${workspaceRoot}/sources",
+            "env": {},
+            "args": [],
+            "showLog": false
+        },
+        {
+            "name": "aggregator",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "remotePath": "",
+            "port": 2345,
+            "host": "127.0.0.1",
+            "program": "${workspaceRoot}/aggregator",
+            "env": {},
+            "args": [],
+            "showLog": false
         }
     ]
 }

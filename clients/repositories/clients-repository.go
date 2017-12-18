@@ -1,8 +1,12 @@
 package repositories
 
 import (
+	"errors"
+
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
+
+	"github.com/kv4sha/golang-mongodb-docker/clients/models"
 )
 
 type clientsRepository struct {
@@ -13,73 +17,65 @@ func GetClientsRepository(mongoDbSession *mgo.Session) *clientsRepository {
 	return &clientsRepository{mongoDbSession: mongoDbSession}
 }
 
-func (repository *clientsRepository) GetAll() ([]Client, error) {
+func (repository *clientsRepository) GetAll() ([]models.Client, error) {
 	collection := repository.getCollection()
 	defer collection.Database.Session.Close()
 
-	var clients []Client
+	var clientEntities []clientEntity
 
-	err := collection.Find(bson.M{}).All(&clients)
-
-	if err != nil {
+	if err := collection.Find(bson.M{}).All(&clientEntities); err != nil {
 		return nil, err
 	}
 
-	return clients, nil
+	return getClients(clientEntities), nil
 }
 
-func (repository *clientsRepository) GetById(id string) (*Client, error) {
+func (repository *clientsRepository) GetByID(id string) (*models.Client, error) {
 	collection := repository.getCollection()
 	defer collection.Database.Session.Close()
 
-	var client Client
+	var clientEntity clientEntity
 
-	err := collection.Find(bson.M{"id": id}).One(&client)
+	if !bson.IsObjectIdHex(id) {
+		return nil, errors.New("ID isn't hex")
+	}
 
-	if err != nil {
+	if err := collection.FindId(bson.ObjectIdHex(id)).One(&clientEntity); err != nil {
 		return nil, err
 	}
 
-	return &client, nil
+	client := clientEntity.getClient()
+
+	return client, nil
 }
 
-func (repository *clientsRepository) Add(client *Client) ([]Client, error) {
+func (repository *clientsRepository) Add(client *models.Client) error {
 	collection := repository.getCollection()
 	defer collection.Database.Session.Close()
 
-	err := collection.Insert(client)
+	clientEntity := GetClientEntity(client)
 
-	if err != nil {
-		return nil, err
-	}
-
-	return repository.GetAll()
+	return collection.Insert(clientEntity)
 }
 
-func (repository *clientsRepository) Update(client *Client) ([]Client, error) {
+func (repository *clientsRepository) Update(client *models.Client) error {
 	collection := repository.getCollection()
 	defer collection.Database.Session.Close()
 
-	err := collection.Update(bson.M{"id": client.ID}, client)
+	clientEntity := GetClientEntity(client)
 
-	if err != nil {
-		return nil, err
-	}
-
-	return repository.GetAll()
+	return collection.UpdateId(bson.ObjectIdHex(client.ID), clientEntity)
 }
 
-func (repository *clientsRepository) Delete(id string) ([]Client, error) {
+func (repository *clientsRepository) Delete(id string) error {
 	collection := repository.getCollection()
 	defer collection.Database.Session.Close()
 
-	err := collection.Remove(bson.M{"id": id})
-
-	if err != nil {
-		return nil, err
+	if !bson.IsObjectIdHex(id) {
+		return errors.New("ID isn't hex")
 	}
 
-	return repository.GetAll()
+	return collection.RemoveId(bson.ObjectIdHex(id))
 }
 
 func (repository *clientsRepository) getCollection() *mgo.Collection {

@@ -1,6 +1,6 @@
 {
-    "server": "127.0.0.1:8081",
-    "mongoDbUrl": "127.0.0.1:27017",
+    "server": "127.0.0.1:8080",
+    "clientsServiceURL": "http://127.0.0.1:8081",
     "destinationsServiceURL": "http://127.0.0.1:8082",
     "sourcesServiceURL": "http://127.0.0.1:8083"
 }

@@ -8,7 +8,7 @@ import (
 
 type Configuration struct {
 	Server                 string
-	MongoDbURL             string
+	ClientsServiceURL      string
 	DestinationsServiceURL string
 	SourcesServiceURL      string
 }
